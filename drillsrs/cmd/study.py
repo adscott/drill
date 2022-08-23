@@ -11,21 +11,6 @@ from drillsrs.question import render_question_prompt
 def _learn_single_card(
     index: int, num_cards_to_study: int, card: db.Card, mode: Mode
 ) -> None:
-    print(
-        "Card #{} ({:.01%} done, {} left)".format(
-            card.num, index / num_cards_to_study, num_cards_to_study - index
-        )
-    )
-
-    raw_question = card.question
-    raw_answers = card.answers
-    if mode is Mode.reversed or mode is Mode.mixed and random.random() > 0.5:
-        raw_question, raw_answers = random.choice(raw_answers), [raw_question]
-
-    util.ask(render_question_prompt(raw_question, raw_answers, card.tags))
-    util.ask("Answers: %s" % ", ".join(raw_answers))
-    print("")
-
     card.is_active = True
     card.due_date = scheduler.next_due_date(card)
     card.activation_date = datetime.now()
@@ -64,10 +49,6 @@ class StudyCommand(CommandBase):
                 print("No cards to study.")
                 return
 
-            print(
-                "%d cards to study. After seeing a card, hit enter."
-                % len(cards_to_study)
-            )
             print()
 
             num_cards_to_study = len(cards_to_study)

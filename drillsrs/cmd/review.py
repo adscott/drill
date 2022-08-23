@@ -1,5 +1,7 @@
 import argparse
 import random
+import subprocess
+import time
 from datetime import datetime
 from typing import Any, List, Optional
 
@@ -16,21 +18,19 @@ def _review_single_card(
     card: db.Card,
     mode: Mode,
 ) -> db.UserAnswer:
-    print(
-        "Card #{} ({:.01%} done, {} left, {:.01%} correct)".format(
-            card.num,
-            index / len(cards_to_review),
-            len(cards_to_review) - index,
-            correct_answer_count / max(1, index),
-        )
-    )
-
     raw_question = card.question
     raw_answers = card.answers
     if mode is Mode.reversed or mode is Mode.mixed and random.random() > 0.5:
         raw_question, raw_answers = random.choice(raw_answers), [raw_question]
 
+    util.ask("Ready?")
+
     print(render_question_prompt(raw_question, raw_answers, card.tags))
+
+    if "audio" in [tag.name for tag in card.tags]:
+        time.sleep(1)
+        subprocess.check_output(["say", raw_question])
+
     while True:
         answer_text = util.ask("Answer: ")
         if answer_text:
@@ -42,27 +42,7 @@ def _review_single_card(
     else:
         print(util.color("Not quite...", util.COLOR_FAIL), end=" ")
         print("expected: " + ", ".join(raw_answers))
-        print("0 - not correct")
-        print("1 - correct, don't add alias")
-        print("2 - correct, add alias")
-        while True:
-            try:
-                choice = int(util.ask("Choice: "))
-                if choice not in [0, 1, 2]:
-                    raise ValueError()
-                break
-            except ValueError:
-                continue
-
-        if choice == 0:
-            is_correct = False
-        elif choice == 1:
-            is_correct = True
-        elif choice == 2:
-            is_correct = True
-            card.answers.append(answer_text)
-        else:
-            assert False
+        is_correct = False
 
     print()
     user_answer = db.UserAnswer()
