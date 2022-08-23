@@ -1,4 +1,5 @@
 import argparse
+import os
 import random
 import subprocess
 import time
@@ -25,6 +26,8 @@ def _review_single_card(
 
     util.ask("Ready?")
 
+    os.system("clear")
+
     print(render_question_prompt(raw_question, raw_answers, card.tags))
 
     if "audio" in [tag.name for tag in card.tags]:
@@ -35,6 +38,8 @@ def _review_single_card(
         answer_text = util.ask("Answer: ")
         if answer_text:
             break
+        if "audio" in [tag.name for tag in card.tags]:
+            subprocess.check_output(["say", raw_question])
 
     if answer_text.lower() in [a.lower() for a in raw_answers]:
         is_correct = True
