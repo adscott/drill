@@ -23,7 +23,7 @@ class StudyCommand(CommandBase):
     def decorate_arg_parser(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument("deck", nargs="?", help="choose the deck name")
         parser.add_argument(
-            "-n", type=int, default=10, help="set how many flashcards to study"
+            "-n", type=int, default=1000, help="set how many flashcards to study"
         )
         parser.add_argument(
             "-m",
