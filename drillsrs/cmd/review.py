@@ -32,14 +32,14 @@ def _review_single_card(
 
     if "audio" in [tag.name for tag in card.tags]:
         time.sleep(1)
-        subprocess.check_output(["say", raw_question])
+        subprocess.check_output(["say", "-v", "Daniel", raw_question])
 
     while True:
         answer_text = util.ask("Answer: ")
         if answer_text:
             break
         if "audio" in [tag.name for tag in card.tags]:
-            subprocess.check_output(["say", raw_question])
+            subprocess.check_output(["say", "-v", "Daniel", raw_question])
 
     if answer_text.lower() in [a.lower() for a in raw_answers]:
         is_correct = True
