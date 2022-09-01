@@ -49,6 +49,11 @@ def _review_single_card(
         print("expected: " + ", ".join(raw_answers))
         is_correct = False
 
+        while True:
+            learn_text = util.ask("Try again: ")
+            if learn_text.lower() in [a.lower() for a in raw_answers]:
+                break
+
     print()
     user_answer = db.UserAnswer()
     user_answer.date = datetime.now()
