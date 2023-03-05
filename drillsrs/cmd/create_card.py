@@ -51,6 +51,15 @@ class CreateCardCommand(CommandBase):
 
         with db.session_scope() as session:
             deck = db.get_deck_by_name(session, deck_name)
+            cards = (
+                session.query(db.Card)
+                .filter(db.Card.deck_id == deck.id)
+            )
+
+            for card in cards.all():
+                if card.question == question:
+                    print(f"Already got: {question}")
+                    return
 
             max_card_num = db.get_max_card_num(session, deck)
             card = db.Card()
