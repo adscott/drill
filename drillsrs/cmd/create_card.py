@@ -57,8 +57,8 @@ class CreateCardCommand(CommandBase):
             )
 
             for card in cards.all():
-                if card.question == question:
-                    print(f"Already got: {question}")
+                if sorted(card.answers) == sorted(answers):
+                    print(f"Already got: {answers}")
                     return
 
             max_card_num = db.get_max_card_num(session, deck)
